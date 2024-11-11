@@ -19,6 +19,12 @@ use the contains method and BAM! it will see that 3 letters are next to each let
 
 You can make a driver to use the code, or you can use the GUI provided. Either works as you don't need anything else to make the code run.
 
+To compile:
+`javac *.java`
+
+To run:
+`java TicTacToeGUI.java`
+
 ## Sources used
 
 None
