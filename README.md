@@ -1,4 +1,4 @@
-# Project 4: TicTacToe
+# Project: TicTacToe
 
 * Author: Brian Wu
 * Class: CS121 Section #01
