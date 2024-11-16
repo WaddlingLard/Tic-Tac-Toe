@@ -15,6 +15,9 @@ To sum it up as simple as possible, this project was a breeze. To go more in dep
 Another issue that I ran into was how could I create an idea to solve the gameOver() method. I felt that it was the most difficult hill of this entire project and for some time, I had no idea what to do. Until I had an idea that exploded in my head. Why not just translate all the values from the gameBoard into string literals and put them into one. That way, If I get 3 in a row, I can 
 use the contains method and BAM! it will see that 3 letters are next to each letter of all the same kind and quickly find a winner.
 
+UPDATE (11/16/2024):
+I figured out the bug that caused the game not correctly reseting when using the UI. I also got carried away and tried an entirely different approach to check if a game is over but that hasn't been as successful. I'm just happy that the game works as intended now!
+
 ## Compiling and Using
 
 You can make a driver to use the code, or you can use the GUI provided. Either works as you don't need anything else to make the code run.
