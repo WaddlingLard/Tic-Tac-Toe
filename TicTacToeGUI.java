@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 /**
  * GUI for playing a TicTacToeGame.
  * @author mvail
+ * @author brianwu
  */
 public class TicTacToeGUI extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -83,6 +84,8 @@ public class TicTacToeGUI extends JPanel {
 		for(int row = 0; row < DIM; row++) {
 			for (int col = 0; col < DIM; col++) {
 				gameGrid[row][col].setText(OPEN);
+				// gameGrid[row][col].setText("NEW");
+
 				gameGrid[row][col].setEnabled(true);
 			}
 		}
@@ -160,12 +163,18 @@ public class TicTacToeGUI extends JPanel {
 					button.setText(PLAYER);
 					if (game.gameOver()) { //did the player just win?
 						endGame();
-					} else { //make a random move for the computer
+					} else { //make a random, correct move for the computer
 						Random rand = new Random();
 						boolean done = false;
 						while (!done) {
 							int cRow = rand.nextInt(DIM);
 							int cCol = rand.nextInt(DIM);
+
+							// Not valid move, generate another
+							if (gameGrid[cRow][cCol].getText() != "") {
+								continue;
+							}
+
 							if (game.choose(TicTacToe.BoardChoice.O, cRow, cCol)) {
 								gameGrid[cRow][cCol].setText(COMPUTER);
 								done = true;

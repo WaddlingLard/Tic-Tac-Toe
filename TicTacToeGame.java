@@ -1,4 +1,6 @@
 import java.awt.Point;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * CS 121 Project 4: TicTacToeGame
@@ -15,12 +17,15 @@ public class TicTacToeGame implements TicTacToe {
 	private BoardChoice[][] gameBoard;
 	private int pointCounter = 0;
 
+	private final int WIDTH_OF_BOARD = 3;
+	private final int HEIGHT_OF_BOARD = 3;
+
 	/**
-	 * The default constructor that creates a new gameBoard and moves array. Also calls the newGame() method to reset the board and fill it with OPEN values.
+	 * The default constructor that creates a new gameBoard and moves array via calling the newGame() method.
 	 */
 	public TicTacToeGame() { 
-		this.gameBoard = new BoardChoice[3][3];
-		this.moves = new Point[9];
+		// this.gameBoard = new BoardChoice[3][3];
+		// this.moves = new Point[9];
 		newGame();
 	}
 
@@ -28,11 +33,18 @@ public class TicTacToeGame implements TicTacToe {
 	 * The method that starts a newGame by reseting values to their default state. Also sets the game to IN_PROGRESS.
 	 */
 	@Override
-	public void newGame() { 
+	public void newGame() {
+
+		// Reinitializing gameboard and moves when new game is pushed
+		gameBoard = new BoardChoice[3][3];
+		moves = new Point[9];
+		pointCounter = 0;
+		player = TicTacToe.BoardChoice.OPEN;
+
 		for(int i = 0; i < gameBoard.length; i++) 
 			for(int j = 0; j < gameBoard.length; j++) 
 				gameBoard[i][j] = BoardChoice.OPEN; 
-		this.gameState = TicTacToe.GameState.IN_PROGRESS;
+		gameState = TicTacToe.GameState.IN_PROGRESS;
 	}
 
 	/**
@@ -44,17 +56,50 @@ public class TicTacToeGame implements TicTacToe {
 	 */
 	@Override
 	public boolean choose(TicTacToe.BoardChoice player, int row, int col) { 
-		if(this.player == player || gameBoard[row][col] != TicTacToe.BoardChoice.OPEN || !(pointCounter < 9) || gameOver()) {
+		
+		if (this.player == player) {
+			System.out.println("PLAYER ERROR");
 			return false;
-		}else {
-			Point p = new Point(row, col);
-			moves[pointCounter] = p;
-			pointCounter++;
-			this.player = player;
-			gameBoard[row][col] = player;
-			gameOver();
-			return true;
 		}
+
+		if (gameBoard[row][col] != TicTacToe.BoardChoice.OPEN) {
+			System.out.println("Called move on row: " + row + ", and col: " + col);
+			System.out.println("GAMEBOARD ERROR");
+			return false;
+		}
+		
+		if (!(pointCounter < 9)) {
+			System.out.println("POINT COUNTER ERROR");
+			return false;
+		}
+
+		if (gameOver()) {
+			System.out.println("GAME OVER ERROR");
+			return false;
+		}
+
+
+
+		// if(this.player == player || gameBoard[row][col] != TicTacToe.BoardChoice.OPEN || !(pointCounter < 9) || gameOver()) {
+		// 	System.out.println("CANNOT OUTPUT MOVE!");
+		// 	return false;
+		// }else {
+		// 	Point p = new Point(row, col);
+		// 	moves[pointCounter] = p;
+		// 	pointCounter++;
+		// 	this.player = player;
+		// 	gameBoard[row][col] = player;
+		// 	gameOver();
+		// 	return true;
+		// }
+
+		Point p = new Point(row, col);
+		moves[pointCounter] = p;
+		pointCounter++;
+		this.player = player;
+		gameBoard[row][col] = player;
+		gameOver();
+		return true;
 	}
 
 	/**
@@ -63,6 +108,7 @@ public class TicTacToeGame implements TicTacToe {
 	 */
 	@Override
 	public boolean gameOver() {
+
 		Point[] diagonals = new Point[6];//Array for Diagonal Points to test
 		diagonals[0] = new Point(0,0);
 		diagonals[1] = new Point(1,1);
@@ -118,7 +164,198 @@ public class TicTacToeGame implements TicTacToe {
 		}else {
 			return false;
 		}
+
+		// // BFS Implementation
+		// Queue<CheckPath> search = new LinkedList<CheckPath>();
+
+		// // 5 points to check all winning states
+		// CheckPath[] checkPaths = {new CheckPath(0,0), new CheckPath(0, 1), new CheckPath(0, 2), new CheckPath (1, 0), new CheckPath(2, 0)};
+		// // Only evaluate game over when legally possible, after move 5 (3 X's, 2 0's)
+		// if (pointCounter >= 5) {
+		// 	// Evaluate game state
+		// 	for (CheckPath root : checkPaths) {
+		// 		search.add(root);
+		// 	}
+		// }
+
+		// while (!search.isEmpty()) {
+
+		// 	/*
+		// 	 * NOTE: INDEXING 2D ARRAY
+		// 	 * ARRAY[ROW][COLUMN]
+		// 	 */
+
+		// 	CheckPath check = search.remove();
+		// 	int currentPointX = (int) check.currentPoint().getX();
+		// 	int currentPointY = (int) check.currentPoint().getY();
+		// 	TicTacToe.BoardChoice currentPlayer = gameBoard[currentPointY][currentPointX]; 
+
+		// 	if (currentPlayer == TicTacToeGame.BoardChoice.OPEN) {
+		// 		// Skip as there is nothing here
+		// 		continue;
+		// 	}
+
+		// 	if (check.isValid() == 1) {
+		// 		System.out.println("VALID GAME FOUND!");
+		// 		if (currentPlayer == TicTacToe.BoardChoice.X) {
+		// 			this.gameState = TicTacToe.GameState.X_WON;
+		// 		} else {
+		// 			System.out.println("O_WON!");
+		// 			this.gameState = TicTacToe.GameState.O_WON;
+		// 		}
+		// 		System.out.println("GAME OVER!");
+		// 		return true;
+		// 	} else if (check.isValid() == 0) {
+		// 		return false;
+		// 	}
+
+		// 	// Moving right
+		// 	if (currentPointX + 1 < WIDTH_OF_BOARD) {
+		// 		Point right = new Point(currentPointX + 1, currentPointY);
+		// 		TicTacToe.BoardChoice newPlayer = gameBoard[currentPointY][currentPointX + 1]; 
+
+		// 		// No Point to Continue
+		// 		if (newPlayer == currentPlayer) {
+		// 			Point[] currentPath = check.getPoints();
+		// 			CheckPath add = new CheckPath(currentPath);
+		// 			if (add.addToPath(right)) {
+		// 				search.add(add);
+		// 			}
+		// 		}	
+		// 	}
+
+		
+		// 	// Moving down
+		// 	if (currentPointY + 1 < HEIGHT_OF_BOARD) {
+		// 		Point down = new Point(currentPointX, currentPointY + 1);
+		// 		TicTacToe.BoardChoice newPlayer = gameBoard[currentPointY + 1][currentPointX]; 
+
+		// 		if (newPlayer == currentPlayer) {
+		// 			Point[]currentPath = check.getPoints();
+		// 			CheckPath add = new CheckPath(currentPath);
+		// 			if (add.addToPath(down)) {
+						
+		// 				search.add(add);
+		// 			}
+		// 		}
+		// 	}
+
+		// 	// Moving diagonal (to right)
+		// 	if (currentPointX + 1 < WIDTH_OF_BOARD && currentPointY + 1 < HEIGHT_OF_BOARD) {
+		// 		Point diagonal = new Point(currentPointX + 1, currentPointY + 1);
+		// 		TicTacToe.BoardChoice newPlayer = gameBoard[currentPointY + 1][currentPointX + 1]; 
+
+		// 		if (newPlayer == currentPlayer) {
+		// 			Point[] currentPath = check.getPoints();
+		// 			CheckPath add = new CheckPath(currentPath);
+		// 			if (add.addToPath(diagonal)) {
+		// 				search.add(add);
+		// 			}
+		// 		}
+		// 	}
+
+		// 	// Moving diagonal (to left)
+		// 	if (currentPointX - 1 >= 0 && currentPointY + 1 < HEIGHT_OF_BOARD) {
+		// 		Point diagonal = new Point(currentPointX - 1, currentPointY + 1);
+		// 		TicTacToe.BoardChoice newPlayer = gameBoard[currentPointY + 1][currentPointX - 1]; 
+
+		// 		if (newPlayer == currentPlayer) {
+		// 			Point[] currentPath = check.getPoints();
+		// 			CheckPath add = new CheckPath(currentPath);
+		// 			if (add.addToPath(diagonal)) {
+		// 				search.add(add);
+		// 				}
+		// 		}
+		// 	}
+		// }
+		
+		// // If there is a draw
+		// if (pointCounter == 9) {
+		// 	this.gameState = TicTacToe.GameState.TIE;
+		// 	return true;
+		// }
+
+		// return false;
 	}
+
+	// private class CheckPath {
+	// 	private Point[] path;
+	// 	private int pointCounter;
+
+	// 	public CheckPath(int x, int y) {
+	// 		this.path = new Point[3];
+	// 		this.path[0] = new Point(x, y);
+	// 		this.pointCounter = 1;
+	// 	}
+
+	// 	public CheckPath(Point[] points) {
+	// 		this.path = new Point[3];
+	// 		this.pointCounter = 0;
+	// 		for (int i = 0; i < points.length; i++) {
+	// 			if (points[i] == null) {
+	// 				break;
+	// 			}
+	// 			this.path[i] = points[i];
+	// 			this.pointCounter++;
+	// 		}
+	// 	}
+
+	// 	/**
+	// 	 * 
+	// 	 * @return
+	// 	 */
+	// 	public Point[] getPoints() {
+	// 		Point[] points = new Point[3];
+	// 		for (int i = 0; i < this.path.length; i++) {
+	// 			points[i] = this.path[i];
+	// 		}
+	// 		return points;
+	// 	}
+
+	// 	/**
+	// 	 * 
+	// 	 * @return
+	// 	 */
+	// 	public Point currentPoint() {
+	// 		return new Point((int)this.path[pointCounter - 1].getX(), (int)this.path[pointCounter - 1].getY());
+	// 	}
+
+	// 	/**
+	// 	 * 
+	// 	 * @param newPoint
+	// 	 * @return
+	// 	 */
+	// 	public boolean addToPath(Point newPoint) {
+	// 		if (pointCounter > 2) {
+	// 			return false;
+	// 		}
+	// 		this.path[pointCounter++] = newPoint;
+	// 		return true;
+	// 	}
+
+	// 	/**
+	// 	 * 
+	// 	 * @return {0: Invalid, 1: Valid, 2: Undefined}
+	// 	 */
+	// 	public int isValid() {
+	// 		if (pointCounter == 3) {
+	// 			Point p1 = this.path[0];
+	// 			Point p2 = this.path[1];
+	// 			Point p3 = this.path[2];
+
+	// 			int pointSlopeX = (int)(p2.getX() - p1.getX());
+	// 			int pointSlopeY = (int)(p2.getY() - p1.getY());
+	// 			if ((int)(p3.getX()) == (int)(pointSlopeX + p2.getX()) && (int)(p3.getY()) == (int)(pointSlopeY + p2.getY()) ) {
+	// 				return 1;
+	// 			} else {
+	// 				return 0;
+	// 			}
+	// 		} else {
+	// 			// Needs to have 3 points to be considered for validation
+	// 			return 2;
+	// 		}
+	// 	}
+	// }
 
 	/**
 	 * This method is a getter for the gameState
